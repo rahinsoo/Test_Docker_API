@@ -1,0 +1,15 @@
+# Python cache
+__pycache__
+
+# IDE
+.idea
+.vscode
+
+# env
+.env
+.venv
+
+# tests
+test.db
+test.db-journal
+.pytest_cache

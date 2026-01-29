@@ -1,0 +1,70 @@
+#version: '3.8'
+
+services:
+  # ========================================
+  # SERVICE 1 : APPLICATION FASTAPI
+  # ========================================
+  fastapi:
+    container_name: api-digicheese
+    build:
+
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - ./api:/code/api
+      - ./tests:/code/tests
+    environment:
+      DB_USER: ${USER}
+      DB_PASSWORD: ${PASSWORD}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DATABASE}
+    depends_on:
+      - db
+    networks:
+      - digicheese-net
+
+  # ========================================
+  # SERVICE 2 : BASE DE DONNÉES MARIADB
+  # ========================================
+  db:
+    image: mariadb:10.6
+    container_name: db-digicheese
+    volumes:
+      - digicheese_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_USER: ${USER}
+      MYSQL_PASSWORD: ${PASSWORD}
+    networks:
+      - digicheese-net
+
+  # ========================================
+  # SERVICE 3 : ADMINER (Interface web DB)
+  # ========================================
+  adminer:
+    image: adminer
+    container_name: adminer-digicheese
+    ports:
+      - "8070:8080"
+    networks:
+      - digicheese-net
+
+# ========================================
+# VOLUMES NOMMÉS
+# ========================================
+volumes:
+  digicheese_data:
+    name: digicheese_data
+
+# ========================================
+# RÉSEAUX
+# ========================================
+networks:
+
+  digicheese-net:
+    name: digicheese-net
+    driver: bridge

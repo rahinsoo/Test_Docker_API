@@ -1,7 +1,9 @@
+
 from fastapi import FastAPI
 from .models import *
 from .database import engine
 from .routers import router
+
 
 # Create the FastAPI app and include the router
 app = FastAPI()
